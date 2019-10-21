@@ -1,0 +1,29 @@
+# Get all albums
+GET http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/albums
+Accept: application/json
+
+###
+
+# Get all bands
+GET http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/bands
+Accept: application/json
+
+###
+
+# Add a band
+POST http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/bands
+Content-Type: application/json
+
+{
+  "creationDate": "1975-10-24",
+  "name": "Iron Maiden",
+  "nationality": "UK"
+}
+
+###
+
+# Get the newly created band
+GET http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/bands/4
+Accept: application/json
+
+# Put

@@ -1,0 +1,19 @@
+.navbar  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: darkgreen;
+}
+
+.navbar li {
+    display: inline;
+}
+
+.navbar a, .navbar a:visited {
+    color: blue;
+    margin: 20px;
+}
+
+.active {
+    background-color: white;
+}

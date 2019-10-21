@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <f:metadata>
+        <f:viewParam name="album" value="#{albumView.album}" required="true"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h:panelGrid columns="2" border="2">
+            <h:outputLabel value="Title:" for="title" />
+            <h:outputText id="title" value="#{albumView.album.title}"/>
+
+            <h:outputLabel value="Release Date:" for="releaseDate" />
+            <h:outputText id="releaseDate" value="#{albumView.album.releaseDate}"/>
+
+            <h:outputLabel value="Genre:" for="genre"/>
+            <h:outputText id="genre" value="#{albumView.album.genre}"/>
+
+            <h:outputLabel value="Price:" for="price"/>
+            <h:outputText id="price" value="#{albumView.album.price}"/>
+
+            <h:outputLabel value="Band:" for="band"/>
+            <h:outputText id="band" value="#{albumView.album.band.name}"/>
+        </h:panelGrid>
+
+        <h:button value="Back" outcome="album_list.xhtml"/>
+    </ui:define>
+
+</ui:composition>

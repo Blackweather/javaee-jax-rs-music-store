@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <f:metadata>
+        <f:viewParam name="album" value="#{albumEdit.album}" required="false"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="3" border="2">
+                <h:outputLabel value="Title: " for="title"/>
+                <h:inputText id="title" value="#{albumEdit.album.title}"/>
+                <h:message for="title"/>
+
+                <h:outputLabel value="Band: " for="band"/>
+                <h:selectOneMenu id="band" value="#{albumEdit.album.band}">
+                    <f:selectItems value="#{albumEdit.availableBands}" var="band" itemValue="#{band}" itemLabel="#{band}"/>
+                </h:selectOneMenu>
+                <h:message for="band"/>
+
+                <h:outputLabel value="Release Date: " for="releaseDate"/>
+                <h:inputText id="releaseDate" value="#{albumEdit.album.releaseDate}">
+                    <f:convertDateTime type="localDate" pattern="yyyy-MM-dd"/>
+                </h:inputText>
+                <h:message for="releaseDate"/>
+
+                <h:outputLabel value="Genre: " for="genre"/>
+                <h:selectOneMenu id="genre" value="#{albumEdit.album.genre}">
+                    <f:selectItems value="#{albumEdit.availableGenres}" var="genre" itemValue="#{genre}" itemLabel="#{genre}"/>
+                </h:selectOneMenu>
+                <h:message for="genre"/>
+
+                <h:outputLabel value="Price: " for="price"/>
+                <h:inputText id="price" value="#{albumEdit.album.price}">
+                    <f:convertNumber type="number"/>
+                </h:inputText>
+                <h:message for="price"/>
+
+                <h:commandButton value="Save" action="#{albumEdit.saveAlbum}"/>
+                <h:messages/>
+            </h:panelGrid>
+        </h:form>
+
+        <h:button value="Back" outcome="album_list.xhtml"/>
+    </ui:define>
+
+</ui:composition>
