@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <f:metadata>
+        <f:viewParam name="user" value="#{userEdit.user}" required="false"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h:form>
+            <h:panelGrid columns="3" border="2">
+                <h:outputLabel value="Login:" for="login"/>
+                <h:inputText id="login" value="#{userEdit.user.login}"/>
+                <h:message for="login"/>
+
+                <h:outputLabel value="E-mail:" for="email"/>
+                <h:inputText id="email" value="#{userEdit.user.email}"/>
+                <h:message for="email"/>
+
+                <h:outputLabel value="Password:" for="password"/>
+                <h:inputText id="password" value="#{userEdit.user.password}"/>
+                <h:message for="password"/>
+
+                <h:outputLabel value="Albums:" for="albums"/>
+                <h:selectManyListbox id="albums" collectionType="java.util.ArrayList" value="#{userEdit.user.albums}">
+                    <f:selectItems value="#{userEdit.availableAlbums}" var="album" itemValue="#{album}"
+                                   itemLabel="#{album.band.name} - #{album.title}"/>
+                </h:selectManyListbox>
+                <h:message for="albums"/>
+
+                <h:commandButton value="Save" action="#{userEdit.saveUser}"/>
+
+            </h:panelGrid>
+        </h:form>
+
+        <h:button value="Back" outcome="user_list.xhtml"/>
+    </ui:define>
+</ui:composition>

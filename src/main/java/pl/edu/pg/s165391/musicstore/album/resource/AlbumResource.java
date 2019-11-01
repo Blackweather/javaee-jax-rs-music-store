@@ -2,17 +2,20 @@ package pl.edu.pg.s165391.musicstore.album.resource;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
+import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
 import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
 import java.util.Collection;
+
+import static pl.edu.pg.s165391.musicstore.resource.UriHelper.uri;
 
 @Path("albums")
 public class AlbumResource {
+
+    @Context
+    private UriInfo info;
 
     /**
      * Injected service.
@@ -27,6 +30,7 @@ public class AlbumResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("") // required for url generation
     public Collection<Album> getAllAlbums() {
         return service.findAllAlbums();
     }
@@ -60,6 +64,14 @@ public class AlbumResource {
     public Response getAlbum(@PathParam("albumId") int albumId) {
         Album album = service.findAlbum(albumId);
         if (album != null) {
+            album.getLinks().put(
+                    "self",
+                       Link.builder().href(uri(info, AlbumResource.class, "getAlbum", album.getId())).build());
+
+            album.getLinks().put(
+                    "albums",
+                       Link.builder().href(uri(info, AlbumResource.class, "getAllAlbums")).build());
+
             return Response.ok(album).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();

@@ -26,4 +26,8 @@ Content-Type: application/json
 GET http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/bands/4
 Accept: application/json
 
+###
+DELETE http://localhost:8080/music-store-rest-1.0-SNAPSHOT/api/albums/1
+
+###
 # Put

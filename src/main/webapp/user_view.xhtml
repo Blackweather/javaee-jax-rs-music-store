@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <f:metadata>
+        <f:viewParam name="user" value="#{userView.user}" required="true"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h:panelGrid columns="2" border="2">
+            <h:outputLabel value="Login:" for="login"/>
+            <h:outputText id="login" value="#{userView.user.login}"/>
+
+            <h:outputLabel value="E-mail:" for="email"/>
+            <h:outputText id="email" value="#{userView.user.email}"/>
+
+            <h:outputLabel value="Albums:" for="albums"/>
+            <h:dataTable id="albums" value="#{userView.user.albums}" var="album">
+                <h:column>
+                    <h:outputText value="#{album.band.name} - #{album.title}"/>
+                </h:column>
+            </h:dataTable>
+        </h:panelGrid>
+
+        <h:button value="Back" outcome="user_list.xhtml"/>
+    </ui:define>
+</ui:composition>
