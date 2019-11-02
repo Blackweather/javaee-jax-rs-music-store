@@ -62,7 +62,7 @@ public class UserEdit implements Serializable {
 
     public Collection<Album> getAvailableAlbums() {
         if (availableAlbums == null) {
-            availableAlbums = albumService.findAllAlbums();
+            availableAlbums = albumService.findAllAlbums(0, albumService.countAlbums());
         }
         return availableAlbums;
     }

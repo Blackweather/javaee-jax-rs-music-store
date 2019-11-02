@@ -15,9 +15,15 @@ import java.util.List;
 
 import static pl.edu.pg.s165391.musicstore.resource.UriHelper.uri;
 import static pl.edu.pg.s165391.musicstore.resource.utils.ResourceUtils.*;
+import static pl.edu.pg.s165391.musicstore.album.resource.utils.AlbumResourceUtils.preparePaginationLinks;
 
 @Path("albums")
 public class AlbumResource {
+
+    /**
+     * Defalut page size for pagination
+     */
+    private static final int PAGE_SIZE = 2;
 
     @Context
     private UriInfo info;
@@ -36,8 +42,9 @@ public class AlbumResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("") // required for url generation
-    public Response getAllAlbums() {
-        List<Album> albums = service.findAllAlbums();
+    public Response getAllAlbums(
+            @QueryParam("page") @DefaultValue("0") Integer page) {
+        List<Album> albums = service.findAllAlbums(page * PAGE_SIZE, PAGE_SIZE);
         albums.forEach(a -> {
             addSelfLink(a.getLinks(), info, AlbumResource.class,
                     "getAlbum", a.getId());
@@ -45,14 +52,9 @@ public class AlbumResource {
                     "deleteAlbum", a.getId(), "deleteAlbum", "DELETE");
         });
 
-        EmbeddedResource.EmbeddedResourceBuilder<List<Album>> builder =
-                EmbeddedResource.<List<Album>>builder()
-                        .embedded("albums", albums);
+        EmbeddedResource<List<Album>> embedded =
+                preparePaginationLinks(service, albums, info, page);
 
-        addApiLink(builder, info);
-        addSelfLink(builder, info, AlbumResource.class, "getAllAlbums");
-
-        EmbeddedResource<List<Album>> embedded = builder.build();
         return Response.ok(embedded).build();
     }
 

@@ -40,8 +40,10 @@ public class AlbumService {
     /**
      * @return all available albums
      */
-    public synchronized List<Album> findAllAlbums() {
+    public synchronized List<Album> findAllAlbums(int offset, int limit) {
         return dataProvider.getAlbums().stream()
+                .skip(offset)
+                .limit(limit)
                 .map(Album::new)
                 .collect(Collectors.toList());
     }
@@ -108,6 +110,13 @@ public class AlbumService {
             u.getAlbums().removeIf(a -> a.equals(album));
         });
 
+    }
+
+    /**
+     * @return number of albums in storage
+     */
+    public synchronized int countAlbums() {
+        return dataProvider.getAlbums().size();
     }
 
 }

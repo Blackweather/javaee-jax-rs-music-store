@@ -36,7 +36,7 @@ public class AlbumList {
      */
     public List<Album> getAlbums() {
         if (albums == null) {
-            albums = service.findAllAlbums();
+            albums = service.findAllAlbums(0, service.countAlbums());
         }
         return albums;
     }
