@@ -1,18 +1,27 @@
 package pl.edu.pg.s165391.musicstore.user.resource;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
+import pl.edu.pg.s165391.musicstore.album.model.Album;
+import pl.edu.pg.s165391.musicstore.album.resource.AlbumResource;
+import pl.edu.pg.s165391.musicstore.resource.model.EmbeddedResource;
 import pl.edu.pg.s165391.musicstore.user.UserService;
 import pl.edu.pg.s165391.musicstore.user.model.User;
+import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
 import java.util.Collection;
+import java.util.List;
+
+import static pl.edu.pg.s165391.musicstore.resource.UriHelper.uri;
+import static pl.edu.pg.s165391.musicstore.resource.utils.ResourceUtils.*;
 
 @Path("users")
 public class UserResource {
+
+    @Context
+    private UriInfo info;
 
     /**
      * Injected service.
@@ -27,8 +36,25 @@ public class UserResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<User> getAllUsers() {
-        return service.findAllUsers();
+    @Path("")
+    public Response getAllUsers() {
+        List<User> users = service.findAllUsers();
+        users.forEach(u -> {
+            addSelfLink(u.getLinks(), info, UserResource.class,
+                    "getUser", u.getId());
+            addLink(u.getLinks(), info, UserResource.class,
+                    "deleteUser", u.getId(), "deleteUser", "DELETE");
+        });
+
+        EmbeddedResource.EmbeddedResourceBuilder<List<User>> builder =
+                EmbeddedResource.<List<User>>builder()
+                .embedded("users", users);
+
+        addApiLink(builder, info);
+        addSelfLink(builder, info, UserResource.class, "getAllUsers");
+
+        EmbeddedResource<List<User>> embedded = builder.build();
+        return Response.ok(embedded).build();
     }
 
     /**
@@ -59,8 +85,56 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userId") int userId) {
         User user = service.findUser(userId);
+        if (user == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        addSelfLink(user.getLinks(), info, UserResource.class, "getUser",
+                user.getId());
+
+        user.getLinks().put(
+                    "users",
+                        Link.builder()
+                            .href(uri(info, UserResource.class, "getAllUsers"))
+                            .build());
+
+        if (user.getAlbums() != null) {
+            addLink(user.getLinks(), info, UserResource.class, "getUserAlbums",
+                    userId, "albums");
+        }
+
+        return Response.ok(user).build();
+    }
+
+    /**
+     * Get the albums owned by a single user
+     *
+     * @param userId user id
+     * @return response with embedded albums or 404 code
+     */
+    @GET
+    @Path("{userId}/albums")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserAlbums(@PathParam("userId") int userId) {
+        User user = service.findUser(userId);
         if (user != null) {
-            return Response.ok(user).build();
+            List<Album> albumList = List.copyOf(user.getAlbums());
+            albumList.forEach(a -> addSelfLink(a.getLinks(), info, AlbumResource.class,
+                    "getAlbum", a.getId()));
+            EmbeddedResource<List<Album>> embedded = EmbeddedResource.<List<Album>>builder()
+                    .embedded("albums", albumList)
+                    .link(
+                            "user",
+                            Link.builder()
+                                .href(uri(info, UserResource.class, "getUser", user.getId()))
+                                .build())
+                    .link(
+                            "self",
+                            Link.builder()
+                                .href(uri(info, UserResource.class, "getUserAlbums", user.getId()))
+                                .build())
+                    .build();
+            return Response.ok(embedded).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

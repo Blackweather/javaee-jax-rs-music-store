@@ -4,13 +4,10 @@ import lombok.*;
 
 import java.net.URI;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class Link {
 
     /**

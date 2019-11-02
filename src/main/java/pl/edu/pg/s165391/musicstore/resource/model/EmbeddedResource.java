@@ -3,7 +3,6 @@ package pl.edu.pg.s165391.musicstore.resource.model;
 import lombok.*;
 
 import javax.json.bind.annotation.JsonbProperty;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,10 +10,8 @@ import java.util.Map;
  *
  * @author Karol
  */
-@Getter
-@EqualsAndHashCode
-@ToString
 @Builder
+@Data
 public class EmbeddedResource<V> {
 
     /**
@@ -22,7 +19,7 @@ public class EmbeddedResource<V> {
      */
     @Singular
     @JsonbProperty("_links")
-    private Map<String, Link> links = new HashMap<>();
+    private Map<String, Link> links;
 
     /**
      * Embedded resource, i.e. collection

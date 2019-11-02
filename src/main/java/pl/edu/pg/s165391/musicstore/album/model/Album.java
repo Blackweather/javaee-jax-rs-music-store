@@ -6,6 +6,7 @@ import pl.edu.pg.s165391.musicstore.band.model.Band;
 import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ public class Album implements Serializable {
     /**
      * Album creator.
      */
+    @JsonbTransient
     private Band band;
 
     /**

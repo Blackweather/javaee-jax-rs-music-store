@@ -2,14 +2,19 @@ package pl.edu.pg.s165391.musicstore.album.resource;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
+import pl.edu.pg.s165391.musicstore.band.model.Band;
+import pl.edu.pg.s165391.musicstore.band.resource.BandResource;
+import pl.edu.pg.s165391.musicstore.resource.model.EmbeddedResource;
 import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Collection;
+import java.util.List;
 
 import static pl.edu.pg.s165391.musicstore.resource.UriHelper.uri;
+import static pl.edu.pg.s165391.musicstore.resource.utils.ResourceUtils.*;
 
 @Path("albums")
 public class AlbumResource {
@@ -31,8 +36,24 @@ public class AlbumResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("") // required for url generation
-    public Collection<Album> getAllAlbums() {
-        return service.findAllAlbums();
+    public Response getAllAlbums() {
+        List<Album> albums = service.findAllAlbums();
+        albums.forEach(a -> {
+            addSelfLink(a.getLinks(), info, AlbumResource.class,
+                    "getAlbum", a.getId());
+            addLink(a.getLinks(), info, AlbumResource.class,
+                    "deleteAlbum", a.getId(), "deleteAlbum", "DELETE");
+        });
+
+        EmbeddedResource.EmbeddedResourceBuilder<List<Album>> builder =
+                EmbeddedResource.<List<Album>>builder()
+                        .embedded("albums", albums);
+
+        addApiLink(builder, info);
+        addSelfLink(builder, info, AlbumResource.class, "getAllAlbums");
+
+        EmbeddedResource<List<Album>> embedded = builder.build();
+        return Response.ok(embedded).build();
     }
 
     /**
@@ -63,16 +84,39 @@ public class AlbumResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAlbum(@PathParam("albumId") int albumId) {
         Album album = service.findAlbum(albumId);
+        if (album == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        addSelfLink(album.getLinks(), info, AlbumResource.class, "getAlbum",
+                album.getId());
+
+        album.getLinks().put(
+                "albums",
+                   Link.builder()
+                           .href(uri(info, AlbumResource.class, "getAllAlbums"))
+                           .build());
+
+        if (album.getBand() != null) {
+            addLink(album.getLinks(), info, AlbumResource.class, "getAlbumBand",
+                    albumId, "band");
+        }
+
+        return Response.ok(album).build();
+    }
+
+    @GET
+    @Path("{albumId}/band")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAlbumBand(@PathParam("albumId") int albumId) {
+        Album album = service.findAlbum(albumId);
         if (album != null) {
-            album.getLinks().put(
-                    "self",
-                       Link.builder().href(uri(info, AlbumResource.class, "getAlbum", album.getId())).build());
-
-            album.getLinks().put(
-                    "albums",
-                       Link.builder().href(uri(info, AlbumResource.class, "getAllAlbums")).build());
-
-            return Response.ok(album).build();
+            // TODO: figure out links here
+            Band band = album.getBand();
+            addLink(band.getLinks(), info, BandResource.class, "getAllBands", "bands");
+            addLink(band.getLinks(), info, BandResource.class, "getBand", band.getId(), "band");
+            addSelfLink(band.getLinks(), info, AlbumResource.class, "getAlbumBand", band.getId());
+            addApiLink(band.getLinks(), info);
+            return Response.ok(album.getBand()).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

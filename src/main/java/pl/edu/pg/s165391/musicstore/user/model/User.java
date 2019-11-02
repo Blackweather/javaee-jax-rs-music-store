@@ -2,9 +2,13 @@ package pl.edu.pg.s165391.musicstore.user.model;
 
 import lombok.*;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
+import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
+import javax.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -37,6 +41,7 @@ public class User implements Serializable {
     /**
      * User albums
      */
+    @JsonbTransient
     private List<Album> albums;
 
     /**
@@ -51,5 +56,18 @@ public class User implements Serializable {
         this.password = user.password;
         this.albums = user.albums.stream().map(Album::new).collect(Collectors.toList());
     }
+
+    public User(int id, String login, String email, String password, List<Album> albums) {
+        this.id = id;
+        this.login = login;
+        this.email = email;
+        this.password = password;
+        this.albums = albums;
+    }
+
+    /**
+     * HATEOAS links.
+     */
+    private Map<String, Link> links = new HashMap<>();
 
 }

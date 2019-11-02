@@ -1,18 +1,25 @@
 package pl.edu.pg.s165391.musicstore.band.resource;
 
-import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.band.BandService;
 import pl.edu.pg.s165391.musicstore.band.model.Band;
 
+import static pl.edu.pg.s165391.musicstore.resource.UriHelper.uri;
+import static pl.edu.pg.s165391.musicstore.resource.utils.ResourceUtils.*;
+
+import pl.edu.pg.s165391.musicstore.resource.model.EmbeddedResource;
+import pl.edu.pg.s165391.musicstore.resource.model.Link;
+
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
 import java.util.Collection;
+import java.util.List;
 
 @Path("bands")
 public class BandResource {
+
+    @Context
+    private UriInfo info;
 
     /**
      * Injected service.
@@ -27,8 +34,25 @@ public class BandResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Band> getAllBands() {
-        return service.findAllBands();
+    @Path("")
+    public Response getAllBands() {
+        List<Band> bands = service.findAllBands();
+        bands.forEach(b -> {
+            addSelfLink(b.getLinks(), info, BandResource.class,
+                    "getBand", b.getId());
+            addLink(b.getLinks(), info, BandResource.class,
+                    "deleteBand", b.getId(), "deleteBand", "DELETE");
+        });
+
+        EmbeddedResource.EmbeddedResourceBuilder<List<Band>> builder =
+                EmbeddedResource.<List<Band>>builder()
+                .embedded("bands", bands);
+
+        addApiLink(builder, info);
+        addSelfLink(builder, info, BandResource.class, "getAllBands");
+
+        EmbeddedResource<List<Band>> embedded = builder.build();
+        return Response.ok(embedded).build();
     }
 
     /**
@@ -59,11 +83,20 @@ public class BandResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBand(@PathParam("bandId") int bandId) {
         Band band = service.findBand(bandId);
-        if (band != null) {
-            return Response.ok(band).build();
-        } else {
+        if (band == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        addSelfLink(band.getLinks(), info, BandResource.class, "getBand", band.getId());
+        addApiLink(band.getLinks(), info);
+
+        band.getLinks().put(
+                "bands",
+                Link.builder()
+                    .href(uri(info, BandResource.class, "getAllBands"))
+                    .build());
+
+        return Response.ok(band).build();
     }
 
     /**
