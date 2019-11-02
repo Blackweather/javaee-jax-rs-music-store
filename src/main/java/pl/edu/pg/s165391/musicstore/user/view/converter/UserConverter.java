@@ -1,7 +1,8 @@
-package pl.edu.pg.s165391.musicstore.album.view.converter;
+package pl.edu.pg.s165391.musicstore.user.view.converter;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
-import pl.edu.pg.s165391.musicstore.album.model.User;
+import pl.edu.pg.s165391.musicstore.user.UserService;
+import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.Dependent;
 import javax.faces.component.UIComponent;
@@ -23,10 +24,10 @@ public class UserConverter implements Converter<User> {
     /**
      * Injected album service.
      */
-    private AlbumService service;
+    private UserService service;
 
     @Inject
-    public UserConverter(AlbumService service) {
+    public UserConverter(UserService service) {
         this.service = service;
     }
 

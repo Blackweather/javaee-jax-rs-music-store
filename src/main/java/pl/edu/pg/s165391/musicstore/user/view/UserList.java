@@ -1,7 +1,8 @@
-package pl.edu.pg.s165391.musicstore.album.view;
+package pl.edu.pg.s165391.musicstore.user.view;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
-import pl.edu.pg.s165391.musicstore.album.model.User;
+import pl.edu.pg.s165391.musicstore.user.UserService;
+import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ public class UserList {
     /**
      * Injected album service.
      */
-    private AlbumService service;
+    private UserService service;
 
     /**
      * Loaded list of users.
@@ -27,7 +28,7 @@ public class UserList {
     private List<User> users;
 
     @Inject
-    public UserList(AlbumService service) {
+    public UserList(UserService service) {
         this.service = service;
     }
 

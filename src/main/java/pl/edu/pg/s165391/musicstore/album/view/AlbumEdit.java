@@ -1,10 +1,10 @@
 package pl.edu.pg.s165391.musicstore.album.view;
 
-import lombok.Getter;
 import lombok.Setter;
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
-import pl.edu.pg.s165391.musicstore.album.model.Band;
+import pl.edu.pg.s165391.musicstore.band.BandService;
+import pl.edu.pg.s165391.musicstore.band.model.Band;
 import pl.edu.pg.s165391.musicstore.album.model.Genre;
 
 import javax.faces.view.ViewScoped;
@@ -27,6 +27,11 @@ public class AlbumEdit implements Serializable {
      * Injected album service.
      */
     private AlbumService service;
+
+    /**
+     * Injected band service.
+     */
+    private BandService bandService;
 
     /**
      * All bands in storage.
@@ -52,8 +57,9 @@ public class AlbumEdit implements Serializable {
     }
 
     @Inject
-    public AlbumEdit(AlbumService service) {
+    public AlbumEdit(AlbumService service, BandService bandService) {
         this.service = service;
+        this.bandService = bandService;
     }
 
     /**
@@ -61,7 +67,7 @@ public class AlbumEdit implements Serializable {
      */
     public Collection<Band> getAvailableBands() {
         if (availableBands == null) {
-            availableBands = service.findAllBands();
+            availableBands = bandService.findAllBands();
         }
         return availableBands;
     }

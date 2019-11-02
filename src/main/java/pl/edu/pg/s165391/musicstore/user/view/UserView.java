@@ -1,9 +1,9 @@
-package pl.edu.pg.s165391.musicstore.album.view;
+package pl.edu.pg.s165391.musicstore.user.view;
 
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.edu.pg.s165391.musicstore.album.model.User;
+import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;

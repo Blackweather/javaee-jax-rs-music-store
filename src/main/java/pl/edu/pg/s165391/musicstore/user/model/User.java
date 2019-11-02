@@ -1,10 +1,9 @@
-package pl.edu.pg.s165391.musicstore.album.model;
+package pl.edu.pg.s165391.musicstore.user.model;
 
 import lombok.*;
+import pl.edu.pg.s165391.musicstore.album.model.Album;
 
-import javax.security.enterprise.credential.Password;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,4 +51,5 @@ public class User implements Serializable {
         this.password = user.password;
         this.albums = user.albums.stream().map(Album::new).collect(Collectors.toList());
     }
+
 }

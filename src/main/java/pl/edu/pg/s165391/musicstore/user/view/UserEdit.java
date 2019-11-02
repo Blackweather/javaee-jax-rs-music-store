@@ -1,9 +1,10 @@
-package pl.edu.pg.s165391.musicstore.album.view;
+package pl.edu.pg.s165391.musicstore.user.view;
 
 import lombok.Setter;
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
-import pl.edu.pg.s165391.musicstore.album.model.User;
+import pl.edu.pg.s165391.musicstore.user.UserService;
+import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -21,9 +22,14 @@ import java.util.List;
 @ViewScoped
 public class UserEdit implements Serializable {
     /**
+     * Injected user service
+     */
+    private UserService service;
+
+    /**
      * Injected album service
      */
-    private AlbumService service;
+    private AlbumService albumService;
 
     /**
      * All albums in storage.
@@ -49,13 +55,14 @@ public class UserEdit implements Serializable {
     }
 
     @Inject
-    public UserEdit(AlbumService service) {
-        this.service = service;
+    public UserEdit(UserService userService, AlbumService albumService) {
+        this.service = userService;
+        this.albumService = albumService;
     }
 
     public Collection<Album> getAvailableAlbums() {
         if (availableAlbums == null) {
-            availableAlbums = service.findAllAlbums();
+            availableAlbums = albumService.findAllAlbums();
         }
         return availableAlbums;
     }

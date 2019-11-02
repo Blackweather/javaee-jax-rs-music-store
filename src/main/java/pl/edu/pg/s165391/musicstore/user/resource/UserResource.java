@@ -1,7 +1,8 @@
-package pl.edu.pg.s165391.musicstore.album.resource;
+package pl.edu.pg.s165391.musicstore.user.resource;
 
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
-import pl.edu.pg.s165391.musicstore.album.model.User;
+import pl.edu.pg.s165391.musicstore.user.UserService;
+import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -17,7 +18,7 @@ public class UserResource {
      * Injected service.
      */
     @Inject
-    private AlbumService service;
+    private UserService service;
 
     /**
      * Fetch all the users available.

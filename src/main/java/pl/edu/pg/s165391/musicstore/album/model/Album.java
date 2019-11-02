@@ -2,6 +2,7 @@ package pl.edu.pg.s165391.musicstore.album.model;
 
 
 import lombok.*;
+import pl.edu.pg.s165391.musicstore.band.model.Band;
 import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
 import javax.json.bind.annotation.JsonbProperty;
