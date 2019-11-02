@@ -57,18 +57,26 @@ public class BandService {
      * @param band band to be saved
      */
     public synchronized void saveBand(Band band) {
-        //TODO: take care of synchronization
         if (band.getId() != 0) {
-            // bands.removeIf(b -> b.getId() == band.getId());
-            /*
-            albums.foreach(a -> {
+            dataProvider.getBands().removeIf(b -> b.getId() == band.getId());
+
+            // modify in albums
+            dataProvider.getAlbums().forEach(a -> {
                 if (a.getBand().getId() == band.getId()) {
                     a.setBand(band);
                 }
-             };
-             bands.add(new Band(band));
-             */
-            // saveBandWithAlbumSynchronization(band);
+            });
+
+            // modify in users
+            dataProvider.getUsers().forEach(u -> {
+                u.getAlbums().forEach(a -> {
+                    if (a.getBand().getId() == band.getId()) {
+                        a.setBand(band);
+                    }
+                });
+            });
+
+            dataProvider.getBands().add(new Band(band));
         } else {
             band.setId(dataProvider.getBands().stream()
                     .mapToInt(Band::getId)
@@ -84,10 +92,11 @@ public class BandService {
      * @param band band to be deleted
      */
     public void removeBand(Band band) {
-        // delete all albums of a band
-
+        // remove in albums
         dataProvider.getAlbums().removeIf(a -> a.getBand().equals(band));
+        // remove in bands
         dataProvider.getBands().removeIf(b -> b.equals(band));
+        // remove in users
         dataProvider.getUsers().forEach(u -> {
             u.getAlbums().removeIf(a -> a.getBand().equals(band));
         });

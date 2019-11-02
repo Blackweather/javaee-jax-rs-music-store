@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,9 +65,26 @@ public class AlbumService {
      */
     public synchronized void saveAlbum(Album album) {
         if (album.getId() != 0) {
-            //synchronizeUsersWithAlbums(album);
             // remove if id duplicated
             dataProvider.getAlbums().removeIf(a -> a.getId() == album.getId());
+
+            // remove from users' lists
+            HashSet<Integer> modifiedUsers = new HashSet<>();
+            for (User user : dataProvider.getUsers()) {
+                for (Album userAlbum : user.getAlbums()) {
+                    if (userAlbum.getId() == album.getId()) {
+                        modifiedUsers.add(user.getId());
+                        user.getAlbums().remove(userAlbum);
+                    }
+                }
+            }
+            // add the modified album back to users
+            dataProvider.getUsers().forEach(u -> {
+                if (modifiedUsers.contains(u.getId())) {
+                    u.getAlbums().add(album);
+                }
+            });
+
         } else {
             // pick the next id
             album.setId(dataProvider.getAlbums().stream()
@@ -74,8 +92,6 @@ public class AlbumService {
                     .max()
                     .orElse(0) + 1);
         }
-        //TODO: check if anything needs to be added here, because users reference this stuff
-        // update the album in users
         dataProvider.getAlbums().add(new Album(album));
     }
 
@@ -85,16 +101,9 @@ public class AlbumService {
      * @param album album to be deleted
      */
     public void removeAlbum(Album album) {
-        // delete from users - TODO: check if this works - no it doesnt
-//        users.forEach(u -> {
-//            u.getAlbums().removeIf(a -> a.equals(album));
-//        });
-//        for (User user : users) {
-//            if (user.getAlbums() != null) {
-//                user.getAlbums().removeIf(a -> a.getId() == album.getId());
-//            }
-//        }
+        // remove in albums
         dataProvider.getAlbums().removeIf(a -> a.equals(album));
+        // remove in users
         dataProvider.getUsers().forEach(u -> {
             u.getAlbums().removeIf(a -> a.equals(album));
         });
