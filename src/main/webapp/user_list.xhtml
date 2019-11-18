@@ -7,11 +7,6 @@
     <ui:define name="content">
         <h:dataTable value="#{userList.users}" var="user" cellspacing="1" cellpadding="1" border="2">
             <h:column>
-                <f:facet name="header">ID</f:facet>
-                <h:outputText value="#{user.id}" />
-            </h:column>
-
-            <h:column>
                 <f:facet name="header">Login</f:facet>
                 <h:outputText value="#{user.login}"/>
             </h:column>
@@ -51,5 +46,9 @@
         </h:dataTable>
 
         <h:button value="Create" outcome="user_edit.xhtml"/>
+
+        <h:form>
+            <h:commandButton action="#{userList.init}" value="Init"/>
+        </h:form>
     </ui:define>
 </ui:composition>

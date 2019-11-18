@@ -41,7 +41,7 @@ public class BandConverter implements Converter<Band> {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Band band) {
-        if (band == null) {
+        if (band == null || band.getId() == null) {
             return "";
         }
         return Integer.toString(band.getId());

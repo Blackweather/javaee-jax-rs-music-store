@@ -1,5 +1,6 @@
 package pl.edu.pg.s165391.musicstore.band.view;
 
+import lombok.Getter;
 import lombok.Setter;
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.band.BandService;

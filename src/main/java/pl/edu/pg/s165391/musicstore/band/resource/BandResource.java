@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 @Path("bands")
@@ -44,9 +45,11 @@ public class BandResource {
                     "deleteBand", b.getId(), "deleteBand", "DELETE");
         });
 
+        HashMap<String, List<Band>> bandMap = new HashMap<>();
+        bandMap.put("bands", bands);
         EmbeddedResource.EmbeddedResourceBuilder<List<Band>> builder =
                 EmbeddedResource.<List<Band>>builder()
-                .embedded("bands", bands);
+                .embedded(bandMap);
 
         addApiLink(builder, info);
         addSelfLink(builder, info, BandResource.class, "getAllBands");
@@ -112,7 +115,7 @@ public class BandResource {
         Band original = service.findBand(bandId);
         if (original == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
-        } else if (original.getId() != band.getId()) {
+        } else if (!original.getId().equals(band.getId())) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         } else {
             service.saveBand(band);

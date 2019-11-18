@@ -1,19 +1,15 @@
 package pl.edu.pg.s165391.musicstore.album;
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.edu.pg.s165391.musicstore.DataProvider;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
-import pl.edu.pg.s165391.musicstore.band.model.Band;
-import pl.edu.pg.s165391.musicstore.album.model.Genre;
+import pl.edu.pg.s165391.musicstore.user.UserService;
 import pl.edu.pg.s165391.musicstore.user.model.User;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,96 +23,49 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class AlbumService {
 
-    /**
-     * This class provides the data this class operates on.
-     */
-    private DataProvider dataProvider;
+    @PersistenceContext
+    EntityManager em;
 
-    @Inject
-    public AlbumService(DataProvider dataProvider) {
-        this.dataProvider = dataProvider;
+    public synchronized List<Album> findAllAlbums() {
+        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class).getResultList();
     }
 
-    /**
-     * @return all available albums
-     */
     public synchronized List<Album> findAllAlbums(int offset, int limit) {
-        return dataProvider.getAlbums().stream()
-                .skip(offset)
-                .limit(limit)
-                .map(Album::new)
-                .collect(Collectors.toList());
+        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
     }
 
-    /**
-     * @param id album id
-     * @return single album or null if empty
-     */
     public synchronized Album findAlbum(int id) {
-        return dataProvider.getAlbums().stream()
-                .filter(album -> album.getId() == id)
-                .findFirst()
-                .map(Album::new)
-                .orElse(null);
+        return em.find(Album.class, id);
     }
 
-    /**
-     * Saves new album.
-     *
-     * @param album album to be saved
-     */
+    public synchronized List<Album> findAlbumsFiltered(String bandName) {
+        return em.createNamedQuery(Album.Queries.FIND_FILTERED, Album.class)
+                .setParameter("bandName", bandName)
+                .getResultList();
+    }
+
+    @Transactional
     public synchronized void saveAlbum(Album album) {
-        if (album.getId() != 0) {
-            // remove if id duplicated
-            dataProvider.getAlbums().removeIf(a -> a.getId() == album.getId());
-
-            // remove from users' lists
-            HashSet<Integer> modifiedUsers = new HashSet<>();
-            for (User user : dataProvider.getUsers()) {
-                for (Album userAlbum : user.getAlbums()) {
-                    if (userAlbum.getId() == album.getId()) {
-                        modifiedUsers.add(user.getId());
-                        user.getAlbums().remove(userAlbum);
-                    }
-                }
-            }
-            // add the modified album back to users
-            dataProvider.getUsers().forEach(u -> {
-                if (modifiedUsers.contains(u.getId())) {
-                    u.getAlbums().add(album);
-                }
-            });
-
+        if (album.getId() == null) {
+            em.persist(album);
         } else {
-            // pick the next id
-            album.setId(dataProvider.getAlbums().stream()
-                    .mapToInt(Album::getId)
-                    .max()
-                    .orElse(0) + 1);
+            em.merge(album);
         }
-        dataProvider.getAlbums().add(new Album(album));
     }
 
-    /**
-     * Removes a specific album.
-     *
-     * @param album album to be deleted
-     */
+    @Transactional
     public void removeAlbum(Album album) {
-        // remove in albums
-        dataProvider.getAlbums().removeIf(a -> a.equals(album));
-        // remove in users
-        dataProvider.getUsers().forEach(u -> {
-            u.getAlbums().removeIf(a -> a.equals(album));
-        });
-
+        em.remove(em.merge(album));
     }
 
-    /**
-     * @return number of albums in storage
-     */
     public synchronized int countAlbums() {
-        return dataProvider.getAlbums().size();
+        return Math.toIntExact(
+                em.createNamedQuery(Album.Queries.COUNT, Long.class)
+                        .getSingleResult()
+        );
     }
 
 }

@@ -8,11 +8,6 @@
     <ui:define name="content">
         <h:dataTable value="#{albumList.albums}" var="album" cellspacing="1" cellpadding="1" border="2">
             <h:column>
-                <f:facet name="header">ID</f:facet>
-                <h:outputText value="#{album.id}"/>
-            </h:column>
-
-            <h:column>
                 <f:facet name="header">Title</f:facet>
                 <h:outputText value="#{album.title}" />
             </h:column>
@@ -43,6 +38,17 @@
         </h:dataTable>
 
         <h:button value="Create" outcome="album_edit.xhtml"/>
+
+        <h:form>
+            <h:outputLabel value="Search by band name:" for="bandName"/>
+            <h:inputText id="bandName" value="#{albumList.searchQuery}"/>
+            <h:commandButton value="Search" action="#{albumList.search()}"/>
+        </h:form>
+        <h:dataTable value="#{albumList.filteredAlbums}" var="album" cellspacing="1" cellpadding="1" border="2">
+            <h:column>
+                <h:outputText value="#{album.title}"/>
+            </h:column>
+        </h:dataTable>
     </ui:define>
 
 </ui:composition>

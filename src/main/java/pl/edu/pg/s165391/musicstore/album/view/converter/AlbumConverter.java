@@ -40,7 +40,7 @@ public class AlbumConverter implements Converter<Album> {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Album album) {
-        if (album == null) {
+        if (album == null || album.getId() == null) {
             return "";
         }
         return Integer.toString(album.getId());

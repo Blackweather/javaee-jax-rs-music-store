@@ -42,7 +42,7 @@ public class UserConverter implements Converter<User> {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, User user) {
-        if (user == null) {
+        if (user == null || user.getId() == null) {
             return "";
         }
         return Integer.toString(user.getId());

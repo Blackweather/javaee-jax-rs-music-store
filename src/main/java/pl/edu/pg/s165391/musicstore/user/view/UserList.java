@@ -52,4 +52,14 @@ public class UserList {
         service.removeUser(user);
         return "user_list?faces-redirect=true";
     }
+
+    /**
+     * Initializes the database data
+     *
+     * @return navigation url
+     */
+    public String init() {
+        service.init();
+        return "user_list?faces-redirect=true";
+    }
 }

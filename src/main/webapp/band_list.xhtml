@@ -8,11 +8,6 @@
     <ui:define name="content">
         <h:dataTable value="#{bandList.bands}" var="band" cellpadding="1" cellspacing="1" border="2">
             <h:column>
-                <f:facet name="header">ID</f:facet>
-                <h:outputText value="#{band.id}"/>
-            </h:column>
-
-            <h:column>
                 <f:facet name="header">Name</f:facet>
                 <h:outputText value="#{band.name}"/>
             </h:column>

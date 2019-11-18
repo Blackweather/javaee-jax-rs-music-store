@@ -1,5 +1,7 @@
 package pl.edu.pg.s165391.musicstore.album.view;
 
+import lombok.Getter;
+import lombok.Setter;
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
 
@@ -21,6 +23,14 @@ public class AlbumList {
      */
     private AlbumService service;
 
+    @Getter
+    @Setter
+    private String searchQuery = "";
+
+    @Getter
+    @Setter
+    private List<Album> filteredAlbums;
+
     /**
      * Loaded list of albums.
      */
@@ -36,9 +46,17 @@ public class AlbumList {
      */
     public List<Album> getAlbums() {
         if (albums == null) {
-            albums = service.findAllAlbums(0, service.countAlbums());
+            albums = service.findAllAlbums();
         }
         return albums;
+    }
+
+    public List<Album> getAlbumsFiltered() {
+        return service.findAlbumsFiltered(searchQuery);
+    }
+
+    public void search() {
+        filteredAlbums = getAlbumsFiltered();
     }
 
     /**

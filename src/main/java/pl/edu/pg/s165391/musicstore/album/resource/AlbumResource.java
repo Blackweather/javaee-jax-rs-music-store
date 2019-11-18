@@ -44,6 +44,7 @@ public class AlbumResource {
     @Path("") // required for url generation
     public Response getAllAlbums(
             @QueryParam("page") @DefaultValue("0") Integer page) {
+
         List<Album> albums = service.findAllAlbums(page * PAGE_SIZE, PAGE_SIZE);
         albums.forEach(a -> {
             addSelfLink(a.getLinks(), info, AlbumResource.class,

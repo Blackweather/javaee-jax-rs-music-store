@@ -6,6 +6,7 @@ package pl.edu.pg.s165391.musicstore.album.model;
  * @author Karol
  */
 public enum Genre {
+    // FIXME: add JPA
     /**
      * Rock music.
      */
