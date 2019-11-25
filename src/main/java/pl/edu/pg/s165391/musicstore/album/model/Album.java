@@ -11,7 +11,9 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.persistence.criteria.Fetch;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-@Data
+@ToString(exclude = {"band", "users"})
+@EqualsAndHashCode(exclude = {"band", "users"})
 @Entity
 @Table(name = "albums")
 @NamedQuery(name = Album.Queries.FIND_ALL, query = "select album from Album album")
@@ -42,45 +45,59 @@ public class Album implements Serializable {
      */
     @Id
     @GeneratedValue
+    @Getter
     private Integer id;
 
     /**
      * Album title.
      */
     @NotBlank
+    @Getter
+    @Setter
     private String title;
 
     /**
      * Album release date.
      */
-    @NotNull
+    @PastOrPresent
+    @Getter
+    @Setter
     private LocalDate releaseDate;
 
     /**
      * Album genre.
      */
     @Enumerated(EnumType.STRING)
+    @NotNull
+    @Getter
+    @Setter
     private Genre genre;
 
     /**
      * Album price.
      */
     @NotNull
+    @Getter
+    @Setter
     private double price;
 
     /**
      * Album creator.
      */
-    // FIXME: must be bidirectional
     @JsonbTransient
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "AlbumBand")
+    @Getter
+    @Setter
     private Band band;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "AlbumUsers",
         joinColumns = @JoinColumn(name = "album"),
         inverseJoinColumns = @JoinColumn(name = "user"))
+    @Getter
+    @Setter
     private List<User> users = new ArrayList<>();
 
     public Album(String title, LocalDate releaseDate, Genre genre, double price, Band band) {
@@ -96,5 +113,7 @@ public class Album implements Serializable {
      */
     @JsonbProperty("_links")
     @Transient
+    @Getter
+    @Setter
     private Map<String, Link> links = new HashMap<>();
 }

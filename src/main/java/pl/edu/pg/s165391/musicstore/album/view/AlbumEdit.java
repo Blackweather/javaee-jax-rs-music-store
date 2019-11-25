@@ -53,7 +53,7 @@ public class AlbumEdit implements Serializable {
         if (album == null) {
             album = new Album();
         }
-        return  album;
+        return album;
     }
 
     @Inject

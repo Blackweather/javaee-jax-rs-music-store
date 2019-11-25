@@ -20,7 +20,7 @@
                 <h:message for="email"/>
 
                 <h:outputLabel value="Password:" for="password"/>
-                <h:inputText id="password" value="#{userEdit.user.password}"/>
+                <h:inputSecret id="password" value="#{userEdit.user.password}"/>
                 <h:message for="password"/>
 
                 <h:outputLabel value="Albums:" for="albums"/>
@@ -31,7 +31,7 @@
                 <h:message for="albums"/>
 
                 <h:commandButton value="Save" action="#{userEdit.saveUser}"/>
-
+                <h:messages/>
             </h:panelGrid>
         </h:form>
 

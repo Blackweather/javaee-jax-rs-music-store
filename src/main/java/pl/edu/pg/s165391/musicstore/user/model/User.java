@@ -4,18 +4,20 @@ import lombok.*;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
 import pl.edu.pg.s165391.musicstore.resource.model.Link;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@Data
 @EqualsAndHashCode(exclude = {"albums"})
 @ToString(exclude = {"albums"})
 @Entity
@@ -31,12 +33,16 @@ public class User implements Serializable {
      */
     @Id
     @GeneratedValue
+    @Getter
     private Integer id;
 
     /**
      * User login.
      */
     @NotBlank
+    @Size(min = 3, max = 12)
+    @Getter
+    @Setter
     private String login;
 
     /**
@@ -44,12 +50,17 @@ public class User implements Serializable {
      */
     @NotBlank
     @Email
+    @Getter
+    @Setter
     private String email;
 
     /**
      * User password
      */
-    @NotBlank
+    @Size(min = 8, max = 20)
+    @Getter
+    @Setter
+    //@Password
     private String password;
 
     /**
@@ -57,7 +68,9 @@ public class User implements Serializable {
      */
     @JsonbTransient
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-    private List<Album> albums;
+    @Getter
+    @Setter
+    private List<Album> albums = new ArrayList<>();
 
     public User(String login, String email, String password, List<Album> albums) {
         this.login = login;
@@ -69,7 +82,10 @@ public class User implements Serializable {
     /**
      * HATEOAS links.
      */
+    @JsonbProperty("_links")
     @Transient
+    @Getter
+    @Setter
     private Map<String, Link> links = new HashMap<>();
 
 }

@@ -53,16 +53,16 @@ public class UserService {
         em.persist(b2);
         em.persist(b3);
 
-        User u1 = new User("adam.new", "andrzej.kowalski@wp.pl", "123456", new ArrayList<>() {{
+        User u1 = new User("adam.new", "andrzej.kowalski@wp.pl", "12345678", new ArrayList<>() {{
             add(a1);
             add(a2);
         }});
-        User u2 = new User("master", "me.master@gmail.com", "awesome", new ArrayList<>(){{
+        User u2 = new User("master", "me.master@gmail.com", "awesome123", new ArrayList<>(){{
             add(a1);
             add(a2);
             add(a3);
         }});
-        User u3 = new User("new_guy", "im_new@o2.pl", "andrew", new ArrayList<>(){{
+        User u3 = new User("new_guy", "im_new@o2.pl", "andrew123", new ArrayList<>(){{
             add(a3);
         }});
 
