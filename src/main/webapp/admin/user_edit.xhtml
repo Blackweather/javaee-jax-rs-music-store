@@ -19,16 +19,19 @@
                 <h:inputText id="email" value="#{userEdit.user.email}"/>
                 <h:message for="email"/>
 
-                <h:outputLabel value="Password:" for="password"/>
-                <h:inputSecret id="password" value="#{userEdit.user.password}"/>
-                <h:message for="password"/>
+<!--                <h:outputLabel value="Albums:" for="albums"/>-->
+<!--                <h:selectManyListbox id="albums" collectionType="java.util.ArrayList" value="#{userEdit.user.albums}">-->
+<!--                    <f:selectItems value="#{userEdit.availableAlbums}" var="album" itemValue="#{album}"-->
+<!--                                   itemLabel="#{album.band.name} - #{album.title}"/>-->
+<!--                </h:selectManyListbox>-->
+<!--                <h:message for="albums"/>-->
 
-                <h:outputLabel value="Albums:" for="albums"/>
-                <h:selectManyListbox id="albums" collectionType="java.util.ArrayList" value="#{userEdit.user.albums}">
-                    <f:selectItems value="#{userEdit.availableAlbums}" var="album" itemValue="#{album}"
-                                   itemLabel="#{album.band.name} - #{album.title}"/>
+                <h:outputLabel value="Roles:" for="roles"/>
+                <h:selectManyListbox id="roles" collectionType="java.util.ArrayList" value="#{userEdit.user.roles}">
+                    <f:selectItems value="#{userEdit.availableRoles}" var="role" itemValue="#{role}"
+                                    itemLabel="Role: #{role}"/>
                 </h:selectManyListbox>
-                <h:message for="albums"/>
+                <h:message for="roles"/>
 
                 <h:commandButton value="Save" action="#{userEdit.saveUser}"/>
                 <h:messages/>
