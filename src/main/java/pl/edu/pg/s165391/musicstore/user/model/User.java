@@ -22,12 +22,33 @@ import java.util.stream.Collectors;
 @ToString(exclude = {"albums"})
 @Entity
 @Table(name = "users")
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NamedQuery(name = User.Queries.FIND_ALL, query = "select user from User user")
+@NamedQuery(name = User.Queries.FIND_BY_LOGIN, query = "select user from User user where user" +
+            ".login = :login")
 public class User implements Serializable {
 
     public static class Queries {
         public static final String FIND_ALL = "User.findAll";
+        public static final String FIND_BY_LOGIN = "User.findByLogin";
     }
+
+    /**
+     * Available roles.
+     */
+    public static class Roles {
+        /**
+         * Administrator.
+         */
+        public static final String ADMIN = "ADMIN";
+
+        /**
+         * Just a user.
+         */
+        public static final String USER = "USER";
+    }
+
     /**
      * User id. Database surrogate key.
      */
@@ -57,26 +78,34 @@ public class User implements Serializable {
     /**
      * User password
      */
-    @Size(min = 8, max = 20)
+    @NotBlank
     @Getter
     @Setter
-    //@Password
     private String password;
 
-    /**
-     * User albums
-     */
-    @JsonbTransient
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+//    /**
+//     * User albums
+//     */
+//    @JsonbTransient
+//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+//    @Getter
+//    @Setter
+//    private List<Album> albums = new ArrayList<>();
+
     @Getter
     @Setter
-    private List<Album> albums = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "users_roles", joinColumns =
+        @JoinColumn(name = "user"))
+    @Column(name = "role")
+    @Singular
+    private List<String> roles = new ArrayList<>();
 
     public User(String login, String email, String password, List<Album> albums) {
         this.login = login;
         this.email = email;
         this.password = password;
-        this.albums = albums;
+        //this.albums = albums;
     }
 
     /**

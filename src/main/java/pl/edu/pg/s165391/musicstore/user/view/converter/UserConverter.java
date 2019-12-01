@@ -31,7 +31,6 @@ public class UserConverter implements Converter<User> {
         this.service = service;
     }
 
-    //TODO: finish this
     @Override
     public User getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         if (s == null || s.isEmpty()) {

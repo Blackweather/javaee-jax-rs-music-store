@@ -5,8 +5,10 @@ import pl.edu.pg.s165391.musicstore.user.UserService;
 import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,17 +17,12 @@ import java.util.List;
  * @author Karol
  */
 @Named
-@RequestScoped
-public class UserList {
+@ViewScoped
+public class UserList implements Serializable {
     /**
      * Injected album service.
      */
     private UserService service;
-
-    /**
-     * Loaded list of users.
-     */
-    private List<User> users;
 
     @Inject
     public UserList(UserService service) {
@@ -36,10 +33,7 @@ public class UserList {
      * @return all users in storage
      */
     public List<User> getUsers() {
-        if (users == null) {
-            users = service.findAllUsers();
-        }
-        return users;
+        return service.findAllUsers();
     }
 
     /**
@@ -53,13 +47,4 @@ public class UserList {
         return "user_list?faces-redirect=true";
     }
 
-    /**
-     * Initializes the database data
-     *
-     * @return navigation url
-     */
-    public String init() {
-        service.init();
-        return "user_list?faces-redirect=true";
-    }
 }

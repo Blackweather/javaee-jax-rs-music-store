@@ -9,7 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.security.AccessControlException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,39 +28,62 @@ public class AlbumService {
     @PersistenceContext
     EntityManager em;
 
+    @Inject
+    private HttpServletRequest securityContext;
+
     public synchronized List<Album> findAllAlbums() {
-        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class).getResultList();
+        if (securityContext.isUserInRole(User.Roles.USER)) {
+            return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class).getResultList();
+        }
+        throw new AccessControlException("Access denied");
     }
 
     public synchronized List<Album> findAllAlbums(int offset, int limit) {
-        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getResultList();
+        if (securityContext.isUserInRole(User.Roles.USER)) {
+            return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(limit)
+                    .getResultList();
+        }
+        throw new AccessControlException("Access denied");
     }
 
     public synchronized Album findAlbum(int id) {
-        return em.find(Album.class, id);
+        if (securityContext.isUserInRole((User.Roles.USER))) {
+            return em.find(Album.class, id);
+        }
+        throw new AccessControlException("Access denied");
     }
 
     public synchronized List<Album> findAlbumsFiltered(String bandName) {
-        return em.createNamedQuery(Album.Queries.FIND_FILTERED, Album.class)
-                .setParameter("bandName", bandName)
-                .getResultList();
+        if (securityContext.isUserInRole(User.Roles.USER)) {
+            return em.createNamedQuery(Album.Queries.FIND_FILTERED, Album.class)
+                    .setParameter("bandName", bandName)
+                    .getResultList();
+        }
+        throw new AccessControlException("Access denied");
     }
 
     @Transactional
     public synchronized void saveAlbum(Album album) {
-        if (album.getId() == null) {
-            em.persist(album);
-        } else {
-            em.merge(album);
+        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
+            if (album.getId() == null) {
+                em.persist(album);
+            } else {
+                em.merge(album);
+            }
+            return;
         }
+        throw new AccessControlException("Access denied");
     }
 
     @Transactional
     public void removeAlbum(Album album) {
-        em.remove(em.merge(album));
+        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
+            em.remove(em.merge(album));
+            return;
+        }
+        throw new AccessControlException("Access denied");
     }
 
     public synchronized int countAlbums() {

@@ -21,7 +21,7 @@ import static pl.edu.pg.s165391.musicstore.album.resource.utils.AlbumResourceUti
 public class AlbumResource {
 
     /**
-     * Defalut page size for pagination
+     * Default page size for pagination
      */
     private static final int PAGE_SIZE = 2;
 
@@ -113,7 +113,6 @@ public class AlbumResource {
     public Response getAlbumBand(@PathParam("albumId") int albumId) {
         Album album = service.findAlbum(albumId);
         if (album != null) {
-            // TODO: figure out links here
             Band band = album.getBand();
             addLink(band.getLinks(), info, BandResource.class, "getAllBands", "bands");
             addLink(band.getLinks(), info, BandResource.class, "getBand", band.getId(), "band");

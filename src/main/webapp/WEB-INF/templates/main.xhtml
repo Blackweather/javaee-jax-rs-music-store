@@ -17,12 +17,19 @@
     <h:body>
         <header>
             <h1>Music Store</h1>
+            <h:form>
+                <h:commandLink action="#{userContext.logout}"
+                           rendered="#{request.userPrincipal ne null}">Logout #{request.userPrincipal.name}</h:commandLink>
+            </h:form>
+            <br/>
+            <h:link outcome="/change_password.xhtml" value="Change Password"
+                    rendered="#{request.userPrincipal ne null}"/>
         </header>
         <nav class="navbar">
             <ul>
-                <li><h:link outcome="album_list.xhtml" value="Albums"/></li>
-                <li><h:link outcome="band_list.xhtml" value="Bands"/></li>
-                <li><h:link outcome="user_list.xhtml" value="Users"/></li>
+                <li><h:link outcome="/album/album_list.xhtml" value="Albums"/></li>
+                <li><h:link outcome="/band/band_list.xhtml" value="Bands"/></li>
+                <li><h:link outcome="/admin/user_list.xhtml" value="Users" rendered="#{request.isUserInRole('ADMIN')}"/></li>
             </ul>
         </nav>
         <section>

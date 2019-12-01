@@ -1,5 +1,6 @@
 package pl.edu.pg.s165391.musicstore.user.view;
 
+import lombok.Getter;
 import lombok.Setter;
 import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
@@ -37,6 +38,11 @@ public class UserEdit implements Serializable {
     private List<Album> availableAlbums;
 
     /**
+     * All available roles.
+     */
+    private List<String> availableRoles;
+
+    /**
      * User to be displayed
      */
     @Setter
@@ -65,6 +71,13 @@ public class UserEdit implements Serializable {
             availableAlbums = albumService.findAllAlbums();
         }
         return availableAlbums;
+    }
+
+    public List<String> getAvailableRoles() {
+        if (availableRoles == null) {
+            availableRoles = service.getAvailableRoles();
+        }
+        return availableRoles;
     }
 
     public String saveUser() {
