@@ -9,13 +9,12 @@ import pl.edu.pg.s165391.musicstore.user.model.User;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,12 +99,24 @@ public class Album implements Serializable {
     @Setter
     private List<User> users = new ArrayList<>();
 
-    public Album(String title, LocalDate releaseDate, Genre genre, double price, Band band) {
+    @Getter
+    @Setter
+    private LocalDateTime lastModificationTime;
+
+    @PreUpdate
+    @PrePersist
+    private void update() {
+        lastModificationTime = LocalDateTime.now();
+    }
+
+    public Album(String title, LocalDate releaseDate, Genre genre, double price, Band band,
+                 LocalDateTime lastModificationTime) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.genre = genre;
         this.price = price;
         this.band = band;
+        this.lastModificationTime = lastModificationTime;
     }
 
     /**

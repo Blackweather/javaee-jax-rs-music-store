@@ -1,9 +1,12 @@
 package pl.edu.pg.s165391.musicstore.user;
 
 import lombok.NoArgsConstructor;
+import pl.edu.pg.s165391.musicstore.album.AlbumService;
 import pl.edu.pg.s165391.musicstore.album.model.Album;
 import pl.edu.pg.s165391.musicstore.album.model.Genre;
 import pl.edu.pg.s165391.musicstore.band.model.Band;
+import pl.edu.pg.s165391.musicstore.permissions.model.Permission;
+import pl.edu.pg.s165391.musicstore.user.interceptors.CheckPermission;
 import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,27 +34,31 @@ public class UserService {
     private EntityManager em;
 
     @Inject
-    private HttpServletRequest securityContext;
+    private AlbumService albumService;
+
+    @Inject
+    public UserService(AlbumService albumService) {
+        this.albumService = albumService;
+    }
 
     /**
      * @return all available users
      */
+    @CheckPermission
     public synchronized List<User> findAllUsers() {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            return em.createNamedQuery(User.Queries.FIND_ALL, User.class).getResultList();
-        }
-        throw new AccessControlException("Access denied");
+        return em.createNamedQuery(User.Queries.FIND_ALL, User.class).getResultList();
     }
 
     /**
      * @param id user id
      * @return single user or null if empty
      */
+    @Transactional
+    @CheckPermission
     public synchronized User findUser(int id) {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            return em.find(User.class, id);
-        }
-        throw new AccessControlException("Access denied");
+        User user = em.find(User.class, id);
+        user.getRoles().size();
+        return user;
     }
 
     public synchronized User findUserByLogin(String login) {
@@ -74,15 +81,25 @@ public class UserService {
      */
     @Transactional
     public synchronized void saveUser(User user) {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            if (user.getId() == null) {
-                em.persist(user);
-            } else {
-                em.merge(user);
-            }
-            return;
+        if (user.getId() == null) {
+            em.persist(user);
+        } else {
+            em.merge(user);
         }
-        throw new AccessControlException("Access denied");
+        user.getRoles().size();
+        for (Album album : user.getAlbums()) {
+            if (!album.getUsers().contains(user)) {
+                album.getUsers().add(user);
+                albumService.saveAlbum(album);
+            }
+        }
+    }
+
+    public synchronized Permission getUserPermission(String roleName, String operationName) {
+        return em.createNamedQuery(Permission.Queries.CHECK_PERMISSION, Permission.class)
+                .setParameter("roleName", roleName)
+                .setParameter("operationName", operationName)
+                .getSingleResult();
     }
 
     /**
@@ -91,11 +108,8 @@ public class UserService {
      * @param user user to be removed
      */
     @Transactional
+    @CheckPermission
     public void removeUser(User user) {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            em.remove(em.merge(user));
-            return;
-        }
-        throw new AccessControlException("Access denied");
+        em.remove(em.merge(user));
     }
 }

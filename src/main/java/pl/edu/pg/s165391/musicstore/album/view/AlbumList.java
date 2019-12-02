@@ -9,6 +9,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * View bean for albums list.
@@ -57,6 +58,14 @@ public class AlbumList {
 
     public void search() {
         filteredAlbums = getAlbumsFiltered();
+    }
+
+    public List<Album> getAlbumsSortedByModificationTime() {
+        return service.findAllAlbums()
+                .stream()
+                .sorted((a1, a2) -> a2.getLastModificationTime()
+                    .compareTo(a1.getLastModificationTime()))
+                .collect(Collectors.toList());
     }
 
     /**

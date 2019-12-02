@@ -3,6 +3,7 @@ package pl.edu.pg.s165391.musicstore.band;
 import lombok.NoArgsConstructor;
 import pl.edu.pg.s165391.musicstore.band.model.Band;
 import pl.edu.pg.s165391.musicstore.user.UserService;
+import pl.edu.pg.s165391.musicstore.user.interceptors.CheckPermission;
 import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,34 +31,30 @@ public class BandService {
     @Inject
     private HttpServletRequest securityContext;
 
+    @CheckPermission
     public synchronized List<Band> findAllBands() {
         return em.createNamedQuery(Band.Queries.FIND_ALL, Band.class).getResultList();
     }
 
+    @CheckPermission
     public synchronized Band findBand(int id) {
         return em.find(Band.class, id);
     }
 
     @Transactional
+    @CheckPermission
     public synchronized void saveBand(Band band) {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            if (band.getId() == null) {
-                em.persist(band);
-            } else {
-                em.merge(band);
-            }
-            return;
+        if (band.getId() == null) {
+            em.persist(band);
+        } else {
+            em.merge(band);
         }
-        throw new AccessControlException("Access denied");
     }
 
     @Transactional
+    @CheckPermission
     public void removeBand(Band band) {
-        if (securityContext.isUserInRole(User.Roles.ADMIN)) {
-            em.remove(em.merge(band));
-            return;
-        }
-        throw new AccessControlException("Access denied");
+        em.remove(em.merge(band));
     }
 
 }

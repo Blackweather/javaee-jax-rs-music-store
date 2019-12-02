@@ -16,12 +16,12 @@
             <h:outputLabel value="E-mail:" for="email"/>
             <h:outputText id="email" value="#{userView.user.email}"/>
 
-<!--            <h:outputLabel value="Albums:" for="albums"/>-->
-<!--            <h:dataTable id="albums" value="#{userView.user.albums}" var="album">-->
-<!--                <h:column>-->
-<!--                    <h:outputText value="#{album.band.name} - #{album.title}"/>-->
-<!--                </h:column>-->
-<!--            </h:dataTable>-->
+            <h:outputLabel value="Albums:" for="albums"/>
+            <h:dataTable id="albums" value="#{userView.user.albums}" var="album">
+                <h:column>
+                    <h:outputText value="#{album.band.name} - #{album.title}"/>
+                </h:column>
+            </h:dataTable>
 
             <h:outputLabel value="Roles:" for="roles"/>
             <h:dataTable id="roles" value="#{userView.user.roles}" var="role">

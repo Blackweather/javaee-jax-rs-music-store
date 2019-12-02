@@ -11,10 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -47,6 +44,9 @@ public class User implements Serializable {
          * Just a user.
          */
         public static final String USER = "USER";
+
+        public static final List<String> ROLES =
+                Arrays.asList(ADMIN, USER);
     }
 
     /**
@@ -83,18 +83,18 @@ public class User implements Serializable {
     @Setter
     private String password;
 
-//    /**
-//     * User albums
-//     */
-//    @JsonbTransient
-//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-//    @Getter
-//    @Setter
-//    private List<Album> albums = new ArrayList<>();
+    /**
+     * User albums
+     */
+    @JsonbTransient
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    @Getter
+    @Setter
+    private List<Album> albums = new ArrayList<>();
 
     @Getter
     @Setter
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "users_roles", joinColumns =
         @JoinColumn(name = "user"))
     @Column(name = "role")
@@ -105,7 +105,15 @@ public class User implements Serializable {
         this.login = login;
         this.email = email;
         this.password = password;
-        //this.albums = albums;
+        this.albums = albums;
+    }
+
+    public User(User user) {
+        this.id = user.id;
+        this.login = user.login;
+        this.password = user.password;
+        this.albums = user.albums;
+        this.roles = new ArrayList<>(user.roles);
     }
 
     /**

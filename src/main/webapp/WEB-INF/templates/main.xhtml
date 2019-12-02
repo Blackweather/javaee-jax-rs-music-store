@@ -13,6 +13,7 @@
         <h:outputStylesheet library="css" name="styles.css"/>
 
         <h:outputScript library="js" name="nav.js" target="body"/>
+        <h:outputScript library="js" name="websockets.js"/>
     </h:head>
     <h:body>
         <header>
@@ -21,14 +22,17 @@
                 <h:commandLink action="#{userContext.logout}"
                            rendered="#{request.userPrincipal ne null}">Logout #{request.userPrincipal.name}</h:commandLink>
             </h:form>
-            <br/>
             <h:link outcome="/change_password.xhtml" value="Change Password"
                     rendered="#{request.userPrincipal ne null}"/>
+            <h:link outcome="/register.xhtml" value="Register"
+                    rendered="#{request.userPrincipal eq null}"/>
         </header>
         <nav class="navbar">
             <ul>
                 <li><h:link outcome="/album/album_list.xhtml" value="Albums"/></li>
+                <li><h:link outcome="/album/album_last_modified.xhtml" value="Albums - last modified"/></li>
                 <li><h:link outcome="/band/band_list.xhtml" value="Bands"/></li>
+                <li><h:link outcome="/basket/basket_view.xhtml" value="Basket"/></li>
                 <li><h:link outcome="/admin/user_list.xhtml" value="Users" rendered="#{request.isUserInRole('ADMIN')}"/></li>
             </ul>
         </nav>

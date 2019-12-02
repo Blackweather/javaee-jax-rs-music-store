@@ -98,10 +98,10 @@ public class UserResource {
                             .href(uri(info, UserResource.class, "getAllUsers"))
                             .build());
 
-//        if (user.getAlbums() != null) {
-//            addLink(user.getLinks(), info, UserResource.class, "getUserAlbums",
-//                    userId, "albums");
-//        }
+        if (user.getAlbums() != null) {
+            addLink(user.getLinks(), info, UserResource.class, "getUserAlbums",
+                    userId, "albums");
+        }
 
         return Response.ok(user).build();
     }
@@ -112,33 +112,33 @@ public class UserResource {
      * @param userId user id
      * @return response with embedded albums or 404 code
      */
-//    @GET
-//    @Path("{userId}/albums")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getUserAlbums(@PathParam("userId") int userId) {
-//        User user = service.findUser(userId);
-//        if (user != null) {
-//            List<Album> albumList = List.copyOf(user.getAlbums());
-//            albumList.forEach(a -> addSelfLink(a.getLinks(), info, AlbumResource.class,
-//                    "getAlbum", a.getId()));
-//            EmbeddedResource<List<Album>> embedded = EmbeddedResource.<List<Album>>builder()
-//                    .embedded("albums", albumList)
-//                    .link(
-//                            "user",
-//                            Link.builder()
-//                                .href(uri(info, UserResource.class, "getUser", user.getId()))
-//                                .build())
-//                    .link(
-//                            "self",
-//                            Link.builder()
-//                                .href(uri(info, UserResource.class, "getUserAlbums", user.getId()))
-//                                .build())
-//                    .build();
-//            return Response.ok(embedded).build();
-//        } else {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-//    }
+    @GET
+    @Path("{userId}/albums")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserAlbums(@PathParam("userId") int userId) {
+        User user = service.findUser(userId);
+        if (user != null) {
+            List<Album> albumList = List.copyOf(user.getAlbums());
+            albumList.forEach(a -> addSelfLink(a.getLinks(), info, AlbumResource.class,
+                    "getAlbum", a.getId()));
+            EmbeddedResource<List<Album>> embedded = EmbeddedResource.<List<Album>>builder()
+                    .embedded("albums", albumList)
+                    .link(
+                            "user",
+                            Link.builder()
+                                .href(uri(info, UserResource.class, "getUser", user.getId()))
+                                .build())
+                    .link(
+                            "self",
+                            Link.builder()
+                                .href(uri(info, UserResource.class, "getUserAlbums", user.getId()))
+                                .build())
+                    .build();
+            return Response.ok(embedded).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
 
     /**
      * Updates single user.

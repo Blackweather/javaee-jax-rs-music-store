@@ -31,7 +31,7 @@
     </error-page>
 
     <login-config>
-        <auth-method>FORM</auth-method>
+        <auth-method>BASIC?silent=true,FORM</auth-method>
         <realm-name>albums</realm-name>
         <form-login-config>
             <form-login-page>/login.xhtml</form-login-page>
@@ -47,9 +47,6 @@
         <auth-constraint>
             <role-name>USER</role-name>
         </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
     </security-constraint>
     
     <security-constraint>
@@ -60,9 +57,6 @@
         <auth-constraint>
             <role-name>USER</role-name>
         </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
     </security-constraint>
 
     <security-constraint>
@@ -73,9 +67,6 @@
         <auth-constraint>
             <role-name>ADMIN</role-name>
         </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
     </security-constraint>
 
     <security-role>
