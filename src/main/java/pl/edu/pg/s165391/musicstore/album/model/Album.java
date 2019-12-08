@@ -31,12 +31,23 @@ import java.util.Map;
         query = "select album from Album album " +
                 "where lower(album.band.name) LIKE " +
                 "CONCAT('%', lower(:bandName), '%' )")
+@NamedEntityGraph(
+        name = Album.Graphs.WITH_BAND_AND_USERS,
+        attributeNodes = {
+                @NamedAttributeNode("band"),
+                @NamedAttributeNode("users")
+        }
+)
 public class Album implements Serializable {
 
     public static class Queries {
         public static final String FIND_ALL = "Album.findAll";
         public static final String COUNT = "Album.count";
         public static final String FIND_FILTERED = "Album.findFiltered";
+    }
+
+    public static class Graphs {
+        public static final String WITH_BAND_AND_USERS = "Album(Band, User)";
     }
 
     /**

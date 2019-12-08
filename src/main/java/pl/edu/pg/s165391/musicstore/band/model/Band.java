@@ -27,10 +27,20 @@ import java.util.Map;
 @Entity
 @Table(name = "bands")
 @NamedQuery(name = Band.Queries.FIND_ALL, query = "select band from Band band")
+@NamedEntityGraph(
+        name = Band.Graphs.WITH_ALBUMS,
+        attributeNodes = {
+                @NamedAttributeNode("albums")
+        }
+)
 public class Band implements Serializable {
 
     public static class Queries {
         public static final String FIND_ALL = "Band.findAll";
+    }
+
+    public static class Graphs {
+        public static final String WITH_ALBUMS = "Band(Album)";
     }
 
     /**

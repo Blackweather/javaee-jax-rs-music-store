@@ -8,12 +8,14 @@ import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.AccessControlException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,12 +35,18 @@ public class BandService {
 
     @CheckPermission
     public synchronized List<Band> findAllBands() {
-        return em.createNamedQuery(Band.Queries.FIND_ALL, Band.class).getResultList();
+        return em.createNamedQuery(Band.Queries.FIND_ALL, Band.class)
+                .setHint("javax.persistence.loadgraph",
+                        em.getEntityGraph(Band.Graphs.WITH_ALBUMS))
+                .getResultList();
     }
 
     @CheckPermission
     public synchronized Band findBand(int id) {
-        return em.find(Band.class, id);
+        EntityGraph entityGraph = em.getEntityGraph(Band.Graphs.WITH_ALBUMS);
+        Map<String, Object> map = Map.of("javax.persistence.loadgraph", entityGraph);
+
+        return em.find(Band.class, id, map);
     }
 
     @Transactional

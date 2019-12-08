@@ -11,6 +11,7 @@ import pl.edu.pg.s165391.musicstore.user.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service bean for managing user collection.
@@ -46,7 +48,10 @@ public class UserService {
      */
     @CheckPermission
     public synchronized List<User> findAllUsers() {
-        return em.createNamedQuery(User.Queries.FIND_ALL, User.class).getResultList();
+        return em.createNamedQuery(User.Queries.FIND_ALL, User.class)
+                .setHint("javax.persistence.loadgraph",
+                        em.getEntityGraph(User.Graphs.WITH_ALBUMS))
+                .getResultList();
     }
 
     /**
@@ -56,7 +61,10 @@ public class UserService {
     @Transactional
     @CheckPermission
     public synchronized User findUser(int id) {
-        User user = em.find(User.class, id);
+        EntityGraph entityGraph = em.getEntityGraph(User.Graphs.WITH_ALBUMS);
+        Map<String, Object> map = Map.of("javax.persistence.loadgraph", entityGraph);
+
+        User user = em.find(User.class, id, map);
         user.getRoles().size();
         return user;
     }
@@ -64,6 +72,8 @@ public class UserService {
     public synchronized User findUserByLogin(String login) {
         return em.createNamedQuery(User.Queries.FIND_BY_LOGIN, User.class)
                 .setParameter("login", login)
+                .setHint("javax.persistence.loadgraph",
+                        em.getEntityGraph(User.Graphs.WITH_ALBUMS))
                 .getSingleResult();
     }
 

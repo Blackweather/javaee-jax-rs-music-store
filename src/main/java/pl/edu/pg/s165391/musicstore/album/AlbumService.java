@@ -9,6 +9,7 @@ import pl.edu.pg.s165391.musicstore.user.model.User;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import javax.transaction.Transactional;
 import java.security.AccessControlException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +40,10 @@ public class AlbumService {
 
     @CheckPermission
     public synchronized List<Album> findAllAlbums() {
-        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class).getResultList();
+        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
+                .setHint("javax.persistence.loadgraph",
+                        em.getEntityGraph(Album.Graphs.WITH_BAND_AND_USERS))
+                .getResultList();
     }
 
     @CheckPermission
@@ -46,12 +51,17 @@ public class AlbumService {
         return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
+                .setHint("javax.persistence.loadgraph",
+                        em.getEntityGraph(Album.Graphs.WITH_BAND_AND_USERS))
                 .getResultList();
     }
 
     @CheckPermission
     public synchronized Album findAlbum(int id) {
-        return em.find(Album.class, id);
+        EntityGraph entityGraph = em.getEntityGraph(Album.Graphs.WITH_BAND_AND_USERS);
+        Map<String, Object> map = Map.of("javax.persistence.loadgraph", entityGraph);
+
+        return em.find(Album.class, id, map);
     }
 
     public synchronized List<Album> findAlbumsFiltered(String bandName) {

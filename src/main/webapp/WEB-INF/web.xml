@@ -22,10 +22,6 @@
         <location>/error/forbidden.xhtml</location>
     </error-page>
     <error-page>
-        <error-code>500</error-code>
-        <location>/error/forbidden.xhtml</location>
-    </error-page>
-    <error-page>
         <exception-type>java.security.AccessControlException</exception-type>
         <location>/error/forbidden.xhtml</location>
     </error-page>

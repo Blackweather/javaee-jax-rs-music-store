@@ -8,18 +8,22 @@
         <h:dataTable cellspacing="1" cellpadding="1" border="2"
                      value="#{albumList.albumsSortedByModificationTime}" var="album">
             <h:column>
+                <f:facet name="header">Title</f:facet>
                 <h:outputText value="#{album.title}"/>
             </h:column>
 
             <h:column>
+                <f:facet name="header">Modification Time</f:facet>
                 <h:outputText value="#{album.lastModificationTime}"/>
             </h:column>
 
             <h:column>
+                <f:facet name="header">Band</f:facet>
                 <h:outputText value="#{album.band.name}"/>
             </h:column>
 
             <h:column>
+                <f:facet name="header">Users</f:facet>
                 <h:dataTable cellpadding="1" cellspacing="1" border="1"
                              value="#{album.users}" var="user">
                     <h:column>

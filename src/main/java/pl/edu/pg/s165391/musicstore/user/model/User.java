@@ -24,11 +24,21 @@ import java.util.stream.Collectors;
 @NamedQuery(name = User.Queries.FIND_ALL, query = "select user from User user")
 @NamedQuery(name = User.Queries.FIND_BY_LOGIN, query = "select user from User user where user" +
             ".login = :login")
+@NamedEntityGraph(
+        name = User.Graphs.WITH_ALBUMS,
+        attributeNodes = {
+                @NamedAttributeNode("albums")
+        }
+)
 public class User implements Serializable {
 
     public static class Queries {
         public static final String FIND_ALL = "User.findAll";
         public static final String FIND_BY_LOGIN = "User.findByLogin";
+    }
+
+    public static class Graphs {
+        public static final String WITH_ALBUMS = "User(Album)";
     }
 
     /**
