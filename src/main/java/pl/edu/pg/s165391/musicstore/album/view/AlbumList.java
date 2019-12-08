@@ -26,7 +26,7 @@ public class AlbumList {
 
     @Getter
     @Setter
-    private String searchQuery = "";
+    private String searchQuery;
 
     @Getter
     @Setter

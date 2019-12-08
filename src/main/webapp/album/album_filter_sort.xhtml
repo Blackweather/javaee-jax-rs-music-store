@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="content">
+        <h:panelGroup id="albumTable">
+            <h:dataTable value="#{albumFilter.albums}" var="album" border="2" cellspacing="1" cellpadding="1">
+
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    <h:outputText value="#{album.id}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Title</f:facet>
+                    <h:outputText value="#{album.title}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Release Date</f:facet>
+                    <h:outputText value="#{album.releaseDate}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Genre</f:facet>
+                    <h:outputText value="#{album.genre}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Price</f:facet>
+                    <h:outputText value="#{album.price}"/>
+                </h:column>
+
+            </h:dataTable>
+        </h:panelGroup>
+
+        <h:form id="filterForm">
+            <h:outputLabel value="Filter by id: " for="albumId"/>
+            <h:inputText id="albumId" value="#{albumFilter.idFilter}">
+                <f:ajax update="filterForm"/>
+            </h:inputText>
+            <br/>
+
+            <h:outputLabel value="Filter by title: " for="title"/>
+            <h:inputText id="title" value="#{albumFilter.titleFilter}">
+                <f:ajax update="filterForm"/>
+            </h:inputText>
+            <br/>
+
+            <h:outputLabel value="Filter by release date: " for="releaseDate"/>
+            <h:inputText id="releaseDate" value="#{albumFilter.releaseDateFilter}">
+                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd"/>
+                <f:ajax update="filterForm"/>
+            </h:inputText>
+            <br/>
+
+            <h:outputLabel value="Filter by genre: " for="genre"/>
+            <h:inputText id="genre" value="#{albumFilter.genreFilter}">
+                <f:ajax update="filterForm"/>
+            </h:inputText>
+            <br/>
+
+            <h:outputLabel value="Filter by price: " for="price"/>
+            <h:inputText id="price" value="#{albumFilter.priceFilter}">
+                <f:ajax update="filterForm"/>
+            </h:inputText>
+            <br/>
+
+            <h:outputLabel value="Order by" for="orderby"/>
+            <h:selectOneMenu id="orderby" value="#{albumFilter.pickedOrderOption}">
+                <f:selectItems value="#{albumFilter.orderByOptions}"
+                               var="order" itemValue="#{order}"
+                               itemLabel="#{order}"/>
+                <f:ajax update="filterForm"/>
+            </h:selectOneMenu>
+            <br/>
+
+            <h:commandButton value="Filter" actionListener="#{albumFilter.filter()}">
+                <f:ajax execute="@this" render=":albumTable"/>
+            </h:commandButton>
+        </h:form>
+    </ui:define>
+</ui:composition>
