@@ -86,10 +86,6 @@ public class AlbumFilterService {
         query.orderBy(cb.asc(root.get(getFieldFromString(orderBy))));
 
         return em.createQuery(query).getResultList();
-        //        return em.createNamedQuery(Album.Queries.FIND_ALL, Album.class)
-//                .setHint("javax.persistence.loadgraph",
-//                        em.getEntityGraph(Album.Graphs.WITH_BAND_AND_USERS))
-//                .getResultList();
     }
 
 }
